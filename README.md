@@ -24,6 +24,29 @@ This project demonstrates real-world Salesforce engineering using LWC, Apex, Flo
 
 ---
 
+## System Flow Diagram
+
+```mermaid
+flowchart TD
+  A[Employee opens Expense Claim Wizard (LWC)] --> B[Create Draft Claim<br/>Expense_Claim__c]
+  B --> C[Add Line Items<br/>Expense_Line_Item__c]
+  C --> D[Upload Receipts to Claim<br/>Salesforce Files]
+  D --> E[Apex Trigger on ContentDocumentLink<br/>Auto-set Receipt_Attached__c = TRUE<br/>for required line items]
+  E --> F[Submit for Approval (Apex)]
+  F --> G[Before-Save Flow on Expense Claim<br/>Blocks if any required receipt missing]
+  G -->|Pass| H[Approval Process Starts]
+  H --> I[Manager Approval<br/>(User.Manager)]
+  I -->|Approve| J[Finance Queue Approval]
+  I -->|Reject| R[Rejected]
+  J -->|Approve| K[Finance Approved]
+  J -->|Reject| R
+  K --> L[Approver Console (LWC)<br/>View claim + line items + receipts<br/>Approve/Reject + Refresh]
+  J --> L
+  I --> L
+```
+
+---
+
 ## Key Features
 
 ### Employee Experience (Wizard – LWC)
@@ -108,3 +131,9 @@ LWC (Wizard & Console)
 - User-centric UI/UX decisions
 
 ---
+
+## Future Enhancements
+- Inline receipt preview modal
+- Approval history timeline in console
+- Record locking after final approval
+- Role-based UI enhancements
