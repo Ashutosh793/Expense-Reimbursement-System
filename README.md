@@ -28,19 +28,19 @@ This project demonstrates real-world Salesforce engineering using LWC, Apex, Flo
 
 ```mermaid
 flowchart TD
-  A[Employee opens Expense Claim Wizard (LWC)] --> B[Create Draft Claim<br/>Expense_Claim__c]
-  B --> C[Add Line Items<br/>Expense_Line_Item__c]
-  C --> D[Upload Receipts to Claim<br/>Salesforce Files]
-  D --> E[Apex Trigger on ContentDocumentLink<br/>Auto-set Receipt_Attached__c = TRUE<br/>for required line items]
-  E --> F[Submit for Approval (Apex)]
-  F --> G[Before-Save Flow on Expense Claim<br/>Blocks if any required receipt missing]
-  G -->|Pass| H[Approval Process Starts]
-  H --> I[Manager Approval<br/>(User.Manager)]
-  I -->|Approve| J[Finance Queue Approval]
-  I -->|Reject| R[Rejected]
-  J -->|Approve| K[Finance Approved]
+  A["Employee opens Expense Claim Wizard"] --> B["Create Draft Claim: Expense_Claim__c"]
+  B --> C["Add Line Items: Expense_Line_Item__c"]
+  C --> D["Upload Receipts to Claim: Salesforce Files"]
+  D --> E["Apex Trigger on ContentDocumentLink: set Receipt_Attached__c = TRUE"]
+  E --> F["Submit for Approval via Apex"]
+  F --> G["Before-Save Flow: block if required receipt missing"]
+  G -->|Pass| H["Approval Process starts"]
+  H --> I["Manager Approval (User Manager)"]
+  I -->|Approve| J["Finance Queue Approval"]
+  I -->|Reject| R["Rejected"]
+  J -->|Approve| K["Finance Approved"]
   J -->|Reject| R
-  K --> L[Approver Console (LWC)<br/>View claim + line items + receipts<br/>Approve/Reject + Refresh]
+  K --> L["Approver Console: view + approve/reject + refresh"]
   J --> L
   I --> L
 ```
@@ -132,8 +132,3 @@ LWC (Wizard & Console)
 
 ---
 
-## Future Enhancements
-- Inline receipt preview modal
-- Approval history timeline in console
-- Record locking after final approval
-- Role-based UI enhancements
