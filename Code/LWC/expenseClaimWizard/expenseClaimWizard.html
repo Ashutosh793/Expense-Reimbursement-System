@@ -1,0 +1,101 @@
+<template>
+    <lightning-card title="Expense Claim Wizard">
+        <div class="slds-p-around_medium">
+
+            <lightning-progress-indicator current-step={currentStep} type="base">
+                <lightning-progress-step label="Claim" value="1"></lightning-progress-step>
+                <lightning-progress-step label="Line Items" value="2"></lightning-progress-step>
+                <lightning-progress-step label="Receipts" value="3"></lightning-progress-step>
+                <lightning-progress-step label="Review & Submit" value="4"></lightning-progress-step>
+            </lightning-progress-indicator>
+
+            <template if:true={isStep1}>
+                <div class="slds-m-top_medium">
+                    <lightning-combobox label="Cost Center" value={costCenter} options={costCenterOptions} onchange={onCostCenterPicklist}></lightning-combobox>
+                    <lightning-textarea label="Business Justification" value={justification} onchange={onJustification}></lightning-textarea>
+                </div>
+            </template>
+
+            <template if:true={isStep2}>
+                <div class="slds-m-top_medium slds-grid slds-gutters">
+                    <div class="slds-col">
+                        <lightning-combobox label="Expense Type" value={liType} options={expenseTypeOptions} onchange={onLiType}></lightning-combobox>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-input type="date" label="Expense Date" value={liDate} onchange={onLiDate}></lightning-input>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-input type="number" label="Amount" value={liAmount} onchange={onLiAmount}></lightning-input>
+                    </div>
+                </div>
+
+                <div class="slds-m-top_small slds-grid slds-gutters">
+                    <div class="slds-col">
+                        <lightning-input label="Merchant" value={liMerchant} onchange={onLiMerchant}></lightning-input>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-input label="Description" value={liDesc} onchange={onLiDesc}></lightning-input>
+                    </div>
+                </div>
+
+                <div class="slds-m-top_small">
+                    <lightning-button label="Add Line Item" variant="brand" onclick={addLineItem}></lightning-button>
+                </div>
+
+                <div class="slds-m-top_medium">
+                    <lightning-datatable
+                        key-field="Id"
+                        data={lineItems}
+                        columns={columns}
+                        hide-checkbox-column
+                        onrowaction={handleRowAction}>
+                    </lightning-datatable>
+                </div>
+            </template>
+
+            <template if:true={isStep3}>
+                <div class="slds-m-top_medium">
+                    <p class="slds-text-body_regular slds-m-bottom_small">
+                        Upload receipts (PDF/JPG/PNG). Upload to the claim record.
+                    </p>
+                    <lightning-file-upload
+                        label="Upload Receipts"
+                        record-id={claimId}
+                        multiple
+                        onuploadfinished={handleUploadFinished}>
+                    </lightning-file-upload>
+                </div>
+            </template>
+
+            <template if:true={isStep4}>
+                <div class="slds-m-top_medium">
+                    <p><b>Claim:</b> {claimName}</p>
+                    <p><b>Status:</b> {claimStatus}</p>
+                    <p><b>Total Expense Amount:</b> {totalAmount}</p>
+                    <p class="slds-m-top_small"><b>Line Items:</b> {lineItemCount}</p>
+                    <p class="slds-text-color_weak slds-m-top_small">
+                        Submit will run receipt checks and then route to Manager → Finance approvals.
+                    </p>
+                </div>
+            </template>
+
+            <div class="slds-m-top_large slds-grid slds-grid_align-spread">
+                <lightning-button label="Back" onclick={back} disabled={isFirst}></lightning-button>
+                <div>
+                    <template if:false={isStep4}>
+                        <lightning-button label="Next" variant="brand" onclick={next} disabled={nextDisabled}></lightning-button>
+                    </template>
+                    <template if:true={isStep4}>
+                        <lightning-button
+                            label="Submit for Approval"
+                            variant="brand"
+                            onclick={submit}
+                            disabled={submitted}>
+                        </lightning-button>
+                    </template>
+                </div>
+            </div>
+
+        </div>
+    </lightning-card>
+</template>
