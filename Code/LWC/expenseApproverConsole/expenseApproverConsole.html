@@ -1,0 +1,106 @@
+<template>
+    <lightning-card title="Expense Approver Console">
+        <div class="slds-p-around_medium">
+
+            <lightning-button
+                label="Refresh"
+                onclick={loadApprovals}
+                class="slds-m-bottom_small">
+            </lightning-button>
+
+            <lightning-datatable
+                key-field="workItemId"
+                data={rows}
+                columns={columns}
+                onrowaction={handleRowAction}
+                hide-checkbox-column
+                class="slds-m-bottom_medium">
+            </lightning-datatable>
+
+            <template if:true={details}>
+                <div class="slds-box slds-theme_default">
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3">
+                            <h3 class="slds-text-heading_small slds-m-bottom_small">
+                                Claim Details
+                            </h3>
+
+                            <p><b>Claim:</b> {details.claim.Name}</p>
+                            <p><b>Employee:</b> {employeeNameSafe}</p>
+                            <p><b>Status:</b> {details.claim.Status__c}</p>
+                            <p><b>Total:</b> {details.claim.Total_Expense_Amount__c}</p>
+                            <p><b>Submitted:</b> {details.claim.Submit_Date__c}</p>
+                            <p class="slds-m-top_small"><b>Cost Center:</b> {details.claim.Cost_Center__c}</p>
+                            <p><b>Justification:</b> {details.claim.Business_Justification__c}</p>
+
+                            <div class="slds-m-top_medium">
+                                <h3 class="slds-text-heading_small slds-m-bottom_small">Line Items</h3>
+                                <lightning-datatable
+                                    key-field="Id"
+                                    data={details.lineItems}
+                                    columns={lineItemColumns}
+                                    hide-checkbox-column>
+                                </lightning-datatable>
+                            </div>
+                        </div>
+
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                            <h3 class="slds-text-heading_small slds-m-bottom_small">
+                                Receipts
+                            </h3>
+
+                            <template if:true={hasReceipts}>
+                                <ul class="slds-list_dotted">
+                                    <template for:each={details.receipts} for:item="r">
+                                        <li key={r.contentDocumentId} class="slds-m-vertical_x-small">
+                                            <a href={r.fileUrl} target="_blank">{r.title}</a>
+                                            <div class="slds-text-color_weak slds-text-body_small">
+                                                {r.linkedOn}
+                                            </div>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </template>
+
+                            <template if:false={hasReceipts}>
+                                <p class="slds-text-color_weak">No receipts attached.</p>
+                            </template>
+
+                            <div class="slds-m-top_medium">
+                                <lightning-textarea
+                                    label="Comments (optional for approve, required for reject)"
+                                    value={comment}
+                                    onchange={onComment}>
+                                </lightning-textarea>
+
+                                <div class="slds-m-top_small slds-grid slds-gutters">
+                                    <div class="slds-col">
+                                        <lightning-button
+                                            label="Approve"
+                                            variant="brand"
+                                            onclick={approve}
+                                            disabled={busy}>
+                                        </lightning-button>
+                                    </div>
+                                    <div class="slds-col">
+                                        <lightning-button
+                                            label="Reject"
+                                            variant="destructive"
+                                            onclick={reject}
+                                            disabled={busy}>
+                                        </lightning-button>
+                                    </div>
+                                </div>
+
+                                <div class="slds-m-top_small">
+                                    <a href={claimRecordUrl} target="_blank">Open Claim Record</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>
